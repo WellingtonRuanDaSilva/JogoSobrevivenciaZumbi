@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Inimigo
   - Zumbi
+  - Jogador
   layers:
   - Default
   - TransparentFX

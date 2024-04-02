@@ -5,9 +5,15 @@ using UnityEngine;
 public class Bala : MonoBehaviour
 {
     public float Velocidade = 20;
+    private Rigidbody rigidbodyBala;
+
+    private void Start()
+    {
+        rigidbodyBala = GetComponent<Rigidbody>();
+    }
     void FixedUpdate()
     {
-        GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + transform.forward * Velocidade * Time.deltaTime);   
+        rigidbodyBala.MovePosition(rigidbodyBala.position + transform.forward * Velocidade * Time.deltaTime);   
     }
 
     void OnTriggerEnter(Collider objetoDeColisao)
