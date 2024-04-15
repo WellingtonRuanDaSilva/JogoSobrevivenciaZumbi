@@ -14,6 +14,12 @@ public class ControlaInimigo : MonoBehaviour, IMatavel
     private Vector3 direcao;
     private float contadorVagar;
     private float tempoEntrePosicaoAleatorias = 4;
+    private float porcentagemGerarKitMedico = 0.1f;
+    public GameObject KitMedicoPrefab;
+    private ControlaInterface scriptControlaInterface;
+    [HideInInspector]
+    public GeradorZumbis meuGerador;
+
 
 
     void Start()
@@ -23,6 +29,7 @@ public class ControlaInimigo : MonoBehaviour, IMatavel
         movimentoInimigo = GetComponent<MovimentoPersonagem>();
         statusInimigo = GetComponent<Status>(); 
         AleatorizarZumbis();
+        scriptControlaInterface = GameObject.FindObjectOfType(typeof(ControlaInterface)) as ControlaInterface;
     }
 
     void FixedUpdate()
@@ -56,7 +63,7 @@ public class ControlaInimigo : MonoBehaviour, IMatavel
         if(contadorVagar < 0)
         {
             posicaoAleatoria = AleatorizarPosicao();
-            contadorVagar += tempoEntrePosicaoAleatorias;
+            contadorVagar += tempoEntrePosicaoAleatorias + Random.Range(-1f, 1f);
         }
 
         bool ficouPertoOSuficiente = Vector3.Distance(transform.position, posicaoAleatoria) <= 0.05;
@@ -85,7 +92,7 @@ public class ControlaInimigo : MonoBehaviour, IMatavel
 
     void AleatorizarZumbis()
     {
-        int geraTipoZumbi = Random.Range(1, 28);
+        int geraTipoZumbi = Random.Range(1, transform.childCount);
         transform.GetChild(geraTipoZumbi).gameObject.SetActive(true);
     }
 
@@ -100,7 +107,21 @@ public class ControlaInimigo : MonoBehaviour, IMatavel
 
     public void Morrer()
     {
-        Destroy(gameObject);
+        Destroy(gameObject, 2);
+        animacaoInimigo.Morrer();
+        movimentoInimigo.Morrer();
+        this.enabled = false;
         ControlaAudio.instancia.PlayOneShot(SomMorte);
+        VerificarGeracaoKitMedico(porcentagemGerarKitMedico);
+        scriptControlaInterface.AtualiarQuatidadeZumbisMortos();
+        meuGerador.DiminuirQuantidadeZumbisVivos();
+    }
+    
+    void VerificarGeracaoKitMedico(float porcetagemGeracao)
+    {
+        if(Random.value <= porcetagemGeracao)
+        {
+            Instantiate(KitMedicoPrefab, transform.position, Quaternion.identity);
+        }
     }
 }

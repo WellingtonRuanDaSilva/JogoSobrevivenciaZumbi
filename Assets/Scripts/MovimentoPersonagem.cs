@@ -21,4 +21,12 @@ public class MovimentoPersonagem : MonoBehaviour
         Quaternion novaRotacao = Quaternion.LookRotation(direcao);
         meuRigidbody.MoveRotation(novaRotacao);
     }
+
+    public void Morrer()
+    {
+        meuRigidbody.constraints = RigidbodyConstraints.None;
+        meuRigidbody.velocity = Vector3.zero;
+        meuRigidbody.isKinematic = false;
+        GetComponent<Collider>().enabled = false;
+    }
 }
